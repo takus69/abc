@@ -3,7 +3,7 @@ use proconio::marker::Chars;
 
 fn main() {
     input! {
-        n: i32,
+        _: i32,
         s: Chars,
     }
     let mut l_cnt: i32 = 0;
@@ -18,9 +18,6 @@ fn main() {
             l_cnt -= 1;
         }
     }
-    if l_cnt < 0 {
-        l_cnt = 0;
-    }
     for ss in s.iter().rev() {
         if ss == &'(' {
             r_cnt += 1;
@@ -28,9 +25,6 @@ fn main() {
         } else {
             r_cnt -= 1;
         }
-    }
-    if r_cnt < 0 {
-        r_cnt = 0;
     }
     println!("{}", '('.to_string().repeat(l_cnt_max as usize) + &s.iter().collect::<String>() + &')'.to_string().repeat(r_cnt_max as usize));
 
