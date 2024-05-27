@@ -1,31 +1,11 @@
 use proconio::input;
-use std::collections::HashMap;
-
 fn main() {
-    input! {
-        n: usize,
-        m: usize,
-        a: [usize; n],
-        b: [usize; m],
-    }
-
-    let mut c = Vec::new();
-    for ai in a.iter() { c.push(ai); }
-    for bi in b.iter() { c.push(bi); }
-    c.sort();
-    let mut ans = "No";
-    let mut flg_a = false;
-    for ci in c.iter() {
-        if a.contains(&ci) {
-            if flg_a {
-                ans = "Yes";
-                break;
-            }
-            flg_a = true;
-        } else {
-            flg_a = false;
-        }
-
-    }
-    println!("{}", ans);
-}
+input!{n:i64,m:i64,a:[i64;n],b:[i64;m]}
+let mut c=b;
+c.extend(&a);
+c.sort();
+for w in c.windows(2){
+if a.contains(&w[0]) && a.contains(&w[1]) {
+println!("Yes");
+return;}}
+println!("No");}
