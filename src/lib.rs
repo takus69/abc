@@ -1,6 +1,6 @@
 use std::collections::{HashMap, VecDeque};
 
-fn primes(n: usize) -> Vec<usize> {
+pub fn primes(n: usize) -> Vec<usize> {
     // エラトステネスの篩にて、n以下の素数リストを作成
     let mut is_prime: Vec<bool> = vec![true; n+1];
     is_prime[0] = false;
@@ -13,7 +13,7 @@ fn primes(n: usize) -> Vec<usize> {
     (0..=n).filter(|&i| is_prime[i]).collect()
 }
 
-fn pow(x: usize, n: usize) -> usize {
+pub fn pow(x: usize, n: usize) -> usize {
     // 繰り返し二乗法
     let mut ret = 1;
     let mut x = x;
@@ -28,7 +28,7 @@ fn pow(x: usize, n: usize) -> usize {
     ret
 }
 
-fn modint(x: usize, n: usize, r#mod: usize) -> usize {
+pub fn modint(x: usize, n: usize, r#mod: usize) -> usize {
     // modを取りながら繰り返し二乗法
     let mut ret = 1;
     let mut x = x;
@@ -45,19 +45,19 @@ fn modint(x: usize, n: usize, r#mod: usize) -> usize {
     ret
 }
 
-struct UnionFind {
+pub struct UnionFind {
     parent: Vec<usize>,
     size: Vec<usize>,
 }
 
 impl UnionFind {
-    fn new(n: usize) -> UnionFind {
+    pub fn new(n: usize) -> UnionFind {
         let parent = (0..n).collect();
         let size = vec![1; n];
         UnionFind{ parent, size }
     }
 
-    fn root(&mut self, i: usize) -> usize {
+    pub fn root(&mut self, i: usize) -> usize {
         if self.parent[i] == i {
             i
         } else {
@@ -67,7 +67,7 @@ impl UnionFind {
         }
     }
 
-    fn unite(&mut self, x: usize, y: usize) {
+    pub fn unite(&mut self, x: usize, y: usize) {
         let x_root = self.root(self.parent[x]);
         let y_root = self.root(self.parent[y]);
         let x_size = self.size(x_root);
@@ -78,13 +78,13 @@ impl UnionFind {
         }
     }
 
-    fn same(&mut self, x: usize, y: usize) -> bool {
+    pub fn same(&mut self, x: usize, y: usize) -> bool {
         let x_root = self.root(self.parent[x]);
         let y_root = self.root(self.parent[y]);
         x_root == y_root
     }
 
-    fn size(&mut self, i: usize) -> usize {
+    pub fn size(&mut self, i: usize) -> usize {
         let i_root = self.root(i);
         self.size[i_root]
     }
@@ -98,7 +98,7 @@ impl UnionFind {
 /// # 戻り値
 /// * `path` - startから各頂点までの距離
 /// * `prev` - startから各頂点までの移動において、各頂点の一つ前の頂点
-fn bfs(start: usize, vertices: Vec<usize>, edges: HashMap<usize, Vec<usize>>) -> (HashMap<usize, usize>, HashMap<usize, i64>) {
+pub fn bfs(start: usize, vertices: Vec<usize>, edges: HashMap<usize, Vec<usize>>) -> (HashMap<usize, usize>, HashMap<usize, i64>) {
     let mut path: HashMap<usize, usize> = HashMap::new();
     let mut que: VecDeque<usize> = VecDeque::new();
     let mut visited: HashMap<usize, bool> = HashMap::new();
@@ -140,7 +140,7 @@ fn bfs(start: usize, vertices: Vec<usize>, edges: HashMap<usize, Vec<usize>>) ->
 /// * `prev` - bfsから取得した、startから各頂点までの移動において、各頂点の一つ前の頂点
 /// # 戻り値
 /// * `path2` - startからendまでの最短経路の頂点.到達不可の場合はNone
-fn reconstruct_path(end: usize, path: HashMap<usize, usize>, prev: HashMap<usize, i64>) -> Option<Vec<usize>> {
+pub fn reconstruct_path(end: usize, path: HashMap<usize, usize>, prev: HashMap<usize, i64>) -> Option<Vec<usize>> {
     let max_len = prev.len();
     let mut path2 = Vec::new();
     // startからendに到達できない場合はNoneを返却
@@ -155,6 +155,17 @@ fn reconstruct_path(end: usize, path: HashMap<usize, usize>, prev: HashMap<usize
     path2.reverse();
 
     Some(path2)
+}
+
+/// bit全探索で要素が使われる数を数え上げる
+pub fn bit_manipulation(el_num: usize) -> usize {
+    let mut cnt = 0;
+    for mask in 0..(1<<el_num) {  // bit全探索で組合せを順に確認
+        for i in 0..el_num {  // i番目の要素がつかわれるかを確認
+            cnt += mask>>i & 1;
+        }
+    }
+    cnt
 }
 
 #[cfg(test)]
@@ -272,5 +283,17 @@ mod tests {
         if let Some(_path2) = reconstruct_path(1, path, prev) {
             panic!();
         }
+    }
+
+    #[test]
+    fn test_bit_manipulation() {
+        let cnt = bit_manipulation(1);
+        assert_eq!(cnt, 1);
+        let cnt = bit_manipulation(2);
+        assert_eq!(cnt, 4);
+        let cnt = bit_manipulation(3);
+        assert_eq!(cnt, 12);
+        let cnt = bit_manipulation(4);
+        assert_eq!(cnt, 32);
     }
 }

@@ -3,17 +3,15 @@ use proconio::input;
 fn main() {
     input! {
         n: usize,
-        sc: [(String, usize); n],
+        mut sc: [(String, usize); n],
     }
 
-    let mut sc = sc;
-    sc.sort_by(|a, b| a.0.cmp(&b.0));
+    sc.sort();
 
-    let mut sum_c = 0;
+    let mut t = 0;
     for (_, c) in sc.iter() {
-        sum_c += c;
+        t += c;
     }
-    let ans_i = sum_c % n;
 
-    println!("{}", sc[ans_i].0);
+    println!("{}", sc[t%n].0);
 }
