@@ -1,5 +1,4 @@
 use proconio::input;
-use ac_library::modint;
 
 fn main() {
     input! {
