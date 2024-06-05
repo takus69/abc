@@ -45,6 +45,7 @@ pub fn modint(x: usize, n: usize, r#mod: usize) -> usize {
     ret
 }
 
+/// 素集合データ構造(UnionFind)
 pub struct UnionFind {
     parent: Vec<usize>,
     size: Vec<usize>,
@@ -160,12 +161,65 @@ pub fn reconstruct_path(end: usize, path: HashMap<usize, usize>, prev: HashMap<u
 /// bit全探索で要素が使われる数を数え上げる
 pub fn bit_manipulation(el_num: usize) -> usize {
     let mut cnt = 0;
-    for mask in 0..(1<<el_num) {  // bit全探索で組合せを順に確認
+    for mask in 0..(1<<el_num) {  // bit全探索で組合せを順に確認(2のel_num乗)
         for i in 0..el_num {  // i番目の要素がつかわれるかを確認
             cnt += mask>>i & 1;
         }
     }
     cnt
+}
+
+/// マージソート
+/// # 引数
+/// * `vec` - ソートしたいVec.&mutで参照して直接変更する
+use std::cmp::PartialOrd;
+pub fn merge_sort<T: PartialOrd+Copy>(vec: &mut [T]) {
+    let length = vec.len();
+    if length == 1 { return; }
+
+    // 要素を2分割してソートする
+    let mid = length / 2;
+    merge_sort(&mut vec[0..mid]);
+    merge_sort(&mut vec[mid..]);
+
+    // 2分割してソートした結果をマージする
+    let mut work_vec = Vec::with_capacity(length);
+    for v in vec.iter() {
+        work_vec.push(*v);
+    }
+    // vecを小さい方から順に更新していく
+    work_vec[mid..].reverse();
+    let mut l = 0;
+    let mut r = length - 1;
+    for i in 0..length {
+        if work_vec[l] <= work_vec[r] {
+            vec[i] = work_vec[l];
+            l += 1;
+        } else {
+            vec[i] = work_vec[r];
+            r -= 1;
+        }
+    }
+}
+
+/// 二分探索
+/// # 引数
+/// * `vec` - 昇順ソート済みのVec
+/// * `target` - vecの要素に対してどの位置に入るか調べたい対象
+/// # 戻り値
+/// * `i` - targetが入るべきインデックス.同じ値の場合は一番最初のインデックス(vec[i-1] < target <= vec[i]を満たす)
+pub fn binary_search<T: PartialOrd>(vec: &[T], target: T) -> usize {
+    let mut ng = -1;
+    let mut ok = vec.len() as i64;
+    while ok - ng > 1 {
+        let mid = (ok + ng) / 2;
+        if vec[mid as usize] < target {
+            ng = mid;
+        } else {
+            ok = mid;
+        }
+    }
+    ok as usize
 }
 
 #[cfg(test)]
@@ -295,5 +349,42 @@ mod tests {
         assert_eq!(cnt, 12);
         let cnt = bit_manipulation(4);
         assert_eq!(cnt, 32);
+    }
+
+    #[test]
+    fn test_merge_sort() {
+        let mut a = vec![5, 4, 3, 2, 1];
+        merge_sort(&mut a);
+        assert_eq!(a, [1, 2, 3, 4, 5]);
+        let mut a = vec![3, -5, 2, 1, -3];
+        merge_sort(&mut a);
+        assert_eq!(a, [-5, -3, 1, 2, 3]);
+    }
+
+    #[test]
+    fn test_binary_search() {
+        let a = vec![-5, -2, 0, 1, 3, 4, 4, 5];
+        let i = binary_search(&a, -6);
+        assert_eq!(i, 0);
+        let i = binary_search(&a, -5);
+        assert_eq!(i, 0);
+        let i = binary_search(&a, -4);
+        assert_eq!(i, 1);
+        let i = binary_search(&a, -2);
+        assert_eq!(i, 1);
+        let i = binary_search(&a, -1);
+        assert_eq!(i, 2);
+        let i = binary_search(&a, 1);
+        assert_eq!(i, 3);
+        let i = binary_search(&a, 2);
+        assert_eq!(i, 4);
+        let i = binary_search(&a, 3);
+        assert_eq!(i, 4);
+        let i = binary_search(&a, 4);
+        assert_eq!(i, 5);
+        let i = binary_search(&a, 5);
+        assert_eq!(i, 7);
+        let i = binary_search(&a, 6);
+        assert_eq!(i, 8);
     }
 }
