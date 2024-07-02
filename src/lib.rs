@@ -45,6 +45,11 @@ pub fn modint(x: usize, n: usize, r#mod: usize) -> usize {
     ret
 }
 
+/// 逆元
+pub fn modinv(x: usize, r#mod: usize) -> usize {
+    modint(x, r#mod-2, r#mod)
+}
+
 /// 素集合データ構造(UnionFind)
 pub struct UnionFind {
     parent: Vec<usize>,
