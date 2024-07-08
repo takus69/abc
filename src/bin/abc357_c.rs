@@ -3,17 +3,14 @@ use proconio::input;
 fn make_block(b: Vec<String>) -> Vec<String> {
     let mut ret: Vec<String> = Vec::new();
     for bi in b.iter() {
-        ret.push(bi.clone() + bi + bi);
+        ret.push(bi.repeat(3));
     }
-    let mut w = String::from("");
-    for _ in 0..b.len() {
-        w += ".";
-    }
+    let w = ".".repeat(b.len());
     for bi in b.iter() {
         ret.push(bi.clone() + &w + bi);
     }
     for bi in b.iter() {
-        ret.push(bi.clone() + bi + bi);
+        ret.push(bi.repeat(3));
     }
 
     ret
@@ -25,10 +22,8 @@ fn main() {
     }
 
     let mut b = vec![String::from("#")];
-    for i in 1..=n {
+    for _ in 1..=n {
         b = make_block(b.clone());
     }
-    for bi in b.iter() {
-        println!("{}", bi);
-    }
+    b.iter().for_each(|x| println!("{}", x));
 }

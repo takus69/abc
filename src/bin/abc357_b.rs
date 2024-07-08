@@ -1,18 +1,13 @@
-use proconio::{input, marker::Chars};
+use proconio::input;
 
 fn main() {
     input! {
-        s: Chars,
+        s: String,
     }
-    let mut up_cnt = 0;
-    for si in s.iter() {
-        if si.is_uppercase() {
-            up_cnt += 1;
-        }
-    }
+    let up_cnt = s.chars().filter(|x| x.is_uppercase()).count();
     if s.len() - up_cnt < up_cnt {
-        println!("{}", s.iter().collect::<String>().to_uppercase());
+        println!("{}", s.to_uppercase());
     } else {
-        println!("{}", s.iter().collect::<String>().to_lowercase());
+        println!("{}", s.to_lowercase());
     }
 }

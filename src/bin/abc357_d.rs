@@ -17,6 +17,10 @@ pub fn modint(x: usize, n: usize, r#mod: usize) -> usize {
     ret
 }
 
+pub fn modinv(x: usize, r#mod: usize) -> usize {
+    modint(x, r#mod-2, r#mod)
+}
+
 /// 以下2つの解法
 /// 1. 繰り返し二乗法(コンテスト中にACした解法)
 /// 2. 等比数列の和(乗法の逆元)
@@ -33,6 +37,15 @@ fn main() {
         }
     }
     let r#mod = 998244353;
+
+    // 2. 等比数列の和(乗法の逆元)
+    // println!("n: {}, cnt: {}, n%mod: {}, modint: {}, modinv: {}", n, cnt, (n % r#mod), (modint(10*cnt, n, r#mod) - 1), (modinv(10*cnt, r#mod) - 1));
+    let p = modint(10, cnt, r#mod);
+    let ans = ((((n % r#mod) * (modint(p, n, r#mod) - 1)) % r#mod) * modinv((p - 1)%r#mod, r#mod)) % r#mod;
+    println!("{}", ans);
+
+    /*
+    // 1. 繰り返し二乗法(コンテスト中にACした解法)
     let mut ans = 0;
     let mut i = 1;
     let mut pre_i = 0;
@@ -51,8 +64,5 @@ fn main() {
         // println!("n: {}, ans: {}, nn: {}", n, ans, nn);
     }
     println!("{}", ans);
-
-    // 等比数列の和
-    // let mut ans = (n % r#mod) * (modint(10, cnt*n, r#mod)) * modint(10, cnt, r#mod))
-
+    */
 }
