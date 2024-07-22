@@ -1,4 +1,5 @@
-use std::collections::{HashMap, VecDeque};
+use std::collections::{HashMap, VecDeque, BinaryHeap};
+use std::cmp::Reverse;
 
 pub fn primes(n: usize) -> Vec<usize> {
     // エラトステネスの篩にて、n以下の素数リストを作成
@@ -227,6 +228,43 @@ pub fn binary_search<T: PartialOrd>(vec: &[T], target: T) -> usize {
     ok as usize
 }
 
+/// ダイクストラ法
+/// # 引数
+/// *`n` - 頂点数
+/// * `edge` - 重みをもった連結リストVec<頂点, 重み>
+/// * `init` - 開始位置
+pub struct Dijkstra {
+    pub distance: HashMap<usize, usize>,
+    pub parent: Vec<usize>,
+}
+
+impl Dijkstra {
+    pub fn new(n: usize, edge: HashMap<usize, Vec<(usize, usize)>>, init: usize) -> Self {
+        let mut distance: HashMap<usize, usize> = HashMap::new();
+        for i in 0..n {
+            distance.insert(i, usize::MAX);
+        }
+        distance.insert(init, 0);
+        let mut parent: Vec<usize> = vec![usize::MAX; n];
+        let mut heap: BinaryHeap<(Reverse<usize>, usize)> = BinaryHeap::new();
+        heap.push((Reverse(0), init));
+
+        while !heap.is_empty() {
+            let (Reverse(dis), a) = heap.pop().unwrap();
+            for (b, d) in edge.get(&a).unwrap().iter() {
+                let cost = dis + d;
+                if cost < distance[b] {
+                    distance.insert(*b, cost);
+                    parent[*b] = a;
+                    heap.push((Reverse(cost), *b));
+                }
+            }
+        }
+
+        Self { distance, parent }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -391,5 +429,25 @@ mod tests {
         assert_eq!(i, 7);
         let i = binary_search(&a, 6);
         assert_eq!(i, 8);
+    }
+
+    fn test_dijkstra() {
+        let n = 5;
+        let mut edge: HashMap<usize, Vec<(usize, usize)>> = HashMap::new();
+        edge.insert(0, vec![(1, 2), (2, 3), (4, 10)]);
+        edge.insert(1, vec![(3, 3)]);
+        edge.insert(2, vec![(3, 1), (1, 3)]);
+        edge.insert(3, vec![(4, 1)]);
+        let dijkstra = Dijkstra::new(n, edge, 0);
+        assert_eq!(dijkstra.distance[&0], 0);
+        assert_eq!(dijkstra.parent[0], usize::MAX);
+        assert_eq!(dijkstra.distance[&1], 2);
+        assert_eq!(dijkstra.parent[1], 0);
+        assert_eq!(dijkstra.distance[&2], 3);
+        assert_eq!(dijkstra.parent[2], 0);
+        assert_eq!(dijkstra.distance[&3], 4);
+        assert_eq!(dijkstra.parent[3], 2);
+        assert_eq!(dijkstra.distance[&4], 5);
+        assert_eq!(dijkstra.parent[4], 3);
     }
 }
