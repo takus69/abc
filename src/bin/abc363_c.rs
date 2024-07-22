@@ -6,42 +6,38 @@ fn main() {
     input! {
         n: usize,
         k: usize,
-        s: Chars,
+        mut s: Chars,
     }
-    let ss = s.clone().into_iter().collect::<HashSet<char>>();
-    if ss.len() == n {
-        let mut ans = 1;
-        for i in 1..=n {
-            ans *= i;
-        }
-        println!("{}", ans);
-        std::process::exit(0);
-    }
-    let mut set: HashSet<Vec<char>> = HashSet::new();
-    for perm in (0..n).permutations(n) {
-        let mut tmp: Vec<char> = Vec::new();
-        for i in perm.iter() {
-            tmp.push(s[*i]);
-        }
-        set.insert(tmp);
+    // let mut set: HashSet<Vec<char>> = HashSet::new();
+    let mut set: Vec<Vec<char>> = Vec::new();
+    for perm in s.into_iter().permutations(n).unique() {
+        // set.insert(perm);
+        set.push(perm);
     }
     let mut ans = set.len();
     for si in set.iter() {
-        let mut flg = false;
+        let mut ng = false;
+        let mut si2 = si.clone();
+        si2.reverse();
         for i in 0..=(n-k) {
-            let mut flg2 = true;
-            for j in 1..=k {
-                if si[i+j-1] != si[i+k-j] {
-                    flg2 = false;
-                    break;
-                } 
-            }
-            if flg2 {
-                flg = true;
+            if si[i..(i+k)] == si2[(n-i-k)..(n-i)] {
+                ng = true;
                 break;
             }
+            /*
+            let mut ng2 = true;
+            for j in 0..k {
+                if si[i+j] != si[i+k-1-j] {
+                    ng2 = false;
+                    break;
+                }
+            }
+            if ng2 {
+                ng = true;
+                break;
+            }*/
         }
-        if flg { ans -= 1; }
+        if ng { ans -= 1; }
     }
     println!("{}", ans);
 }
