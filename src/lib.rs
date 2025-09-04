@@ -3,11 +3,13 @@ use std::cmp::Reverse;
 
 pub fn primes(n: usize) -> Vec<usize> {
     // エラトステネスの篩にて、n以下の素数リストを作成
+    // 計算量O(N log log N)
     let mut is_prime: Vec<bool> = vec![true; n+1];
     is_prime[0] = false;
     is_prime[1] = false;
-    for i in 2..=n {
-        for j in ((i*2)..=n).step_by(i) {
+    for i in 2.. {
+        if i*i > n { break; }
+        for j in ((i*i)..=n).step_by(i) {
             is_prime[j] = false;
         }
     }
