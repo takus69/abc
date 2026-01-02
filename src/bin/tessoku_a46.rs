@@ -1,5 +1,6 @@
 use proconio::input;
 use itertools::Itertools;
+use rand::Rng;
 use rand::seq::IteratorRandom;
 use rand::SeedableRng;
 use rand_chacha::ChaCha20Rng;
@@ -63,7 +64,8 @@ fn two_opt(n: usize, xy: &Vec<(usize, usize)>) -> (Vec<usize>, f64) {
     ans.push(0);
 
     let mut improved_cnt = 0;
-    for _ in 0..200000 {
+    let turn = 200000;
+    for t in 0..turn {
         let choices: Vec<usize> = (1..n).choose_multiple(&mut rng, 2);
         let i1 = choices[0].min(choices[1]);
         let i2 = choices[0].max(choices[1]);
@@ -74,7 +76,10 @@ fn two_opt(n: usize, xy: &Vec<(usize, usize)>) -> (Vec<usize>, f64) {
         let ii3 = ans[i2+1];
         let old_dist = dist(xy[ii0], xy[ii1]) + dist(xy[ii2], xy[ii3]);
         let new_dist = dist(xy[ii0], xy[ii2]) + dist(xy[ii1], xy[ii3]);
-        if old_dist > new_dist {
+
+        let temp = 30.0 - 28.0 * t as f64 / turn as f64; 
+        let p = ((old_dist - new_dist)/temp).exp();
+        if rng.r#gen::<f64>() < p {
             improved_cnt += 1;
             let mut old: Vec<usize> = ans[i1..=i2].to_vec();
             old.reverse();
