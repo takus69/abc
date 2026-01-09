@@ -251,14 +251,15 @@ impl Dijkstra {
         let mut heap: BinaryHeap<(Reverse<usize>, usize)> = BinaryHeap::new();
         heap.push((Reverse(0), init));
 
-        while !heap.is_empty() {
-            let (Reverse(dis), a) = heap.pop().unwrap();
-            for (b, d) in edge.get(&a).unwrap().iter() {
-                let cost = dis + d;
-                if cost < distance[b] {
-                    distance.insert(*b, cost);
-                    parent[*b] = a;
-                    heap.push((Reverse(cost), *b));
+        while let Some((Reverse(dis), a)) = heap.pop() {
+            if let Some(neighbors) = edge.get(&a) {
+                for (b, d) in neighbors.iter() {
+                    let cost = dis + d;
+                    if cost < distance[b] {
+                        distance.insert(*b, cost);
+                        parent[*b] = a;
+                        heap.push((Reverse(cost), *b));
+                    }
                 }
             }
         }
@@ -433,6 +434,7 @@ mod tests {
         assert_eq!(i, 8);
     }
 
+    #[test]
     fn test_dijkstra() {
         let n = 5;
         let mut edge: HashMap<usize, Vec<(usize, usize)>> = HashMap::new();
