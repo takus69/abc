@@ -34,7 +34,7 @@ pub fn pow(x: usize, n: usize) -> usize {
 pub fn modint(x: usize, n: usize, r#mod: usize) -> usize {
     // modを取りながら繰り返し二乗法
     let mut ret = 1;
-    let mut x = x;
+    let mut x = x%r#mod;
     let mut n = n;
     while n > 0 {
         if n & 1 == 1 {
