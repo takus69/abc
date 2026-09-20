@@ -301,7 +301,7 @@ impl<M: Monoid> SegmentTree<M> {
     }
 
     fn query(&self, l: usize, r: usize) -> M::T {
-        self._query(l, r, 1, self.size, 1)
+        self._query(l, r, 0, self.size, 1)
     }
 
     fn _query(&self, l: usize, r: usize, node_l: usize, node_r: usize, node: usize) -> M::T {
